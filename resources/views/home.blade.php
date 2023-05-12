@@ -10,7 +10,7 @@
 
         <h1 class="text-center py-3">Lista treni</h1>
  
-        <div class="d-flex">
+        <div class="grid-box ">
             @foreach ($trains as $train)
 
             <div class="card" style="width: 18rem;">
