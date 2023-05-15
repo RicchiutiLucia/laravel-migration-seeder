@@ -3,10 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\Train;
+use App\Functions\Helpers;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Faker\Generator as Faker;
+
 
 class TrainsTableSeeder extends Seeder
 {
@@ -15,36 +16,27 @@ class TrainsTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run(Faker $faker)
+    public function run()
     {
-        $aziende = ['FrecciaRossa', 'TrenoSud', 'TreNord'];
+        $csvContent = Helpers::getCsvContent(__DIR__ . '/trains.csv');
 
-        for ($i = 0; $i < 150; $i++){
-
-            $new_train = new Train();
-
-            $orario_partenza = $faker->dateTimeBetween('-1 week', '+1 week');
-            $orario_arrivo = $faker->dateTimeInInterval( $orario_partenza , '+1 days');
-
-            $in_orario = $faker-> boolean();
-
-            if($in_orario) {
-                $cancellato = false;
-            } else {
-                $cancellato = $faker-> boolean();
+        foreach ($csvContent as $index => $row) {
+            if ($index > 0) {
+                $newTrain = new Train();
+                $newTrain ->company = $row[0];
+                $newTrain ->departure_station = $row[1];
+                $newTrain ->arrival_station = $row[2];
+                $newTrain ->departure_time = $row[3];
+                $newTrain ->arrival_time= $row[4];
+                $newTrain ->train_code= $row[5];
+                $newTrain ->wagons_number = $row[6];
+                $newTrain ->on_time = $row[7];
+                $newTrain ->cancelled = $row[8];
+               
+                
+                $newTrain ->save();
             }
-
-            $new_train->azienda = $faker-> randomElement($aziende);
-            $new_train->stazione_partenza = $faker-> city();
-            $new_train->stazione_arrivo = $faker-> city();
-            $new_train->orario_partenza = $orario_partenza;
-            $new_train->orario_arrivo = $orario_arrivo;
-            $new_train->codice_treno = $faker-> bothify('#####');
-            $new_train->n_carrozze = $faker-> numberBetween(1, 15);
-            $new_train->ritardo = $in_orario;
-            $new_train->cancellato = $cancellato;
-
-            $new_train->save();
-        }
+        
     }
+}
 }
